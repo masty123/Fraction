@@ -1,4 +1,4 @@
-package PA1;
+package fraction;
 import java.lang.Comparable;
 
 /**
@@ -28,7 +28,7 @@ public class Fraction implements Comparable<Fraction> {
 	 */
 	Fraction(long numerator){
 		this.numerator = numerator;
-		this.denominator = 1;
+		this.denominator = 1L;
 	}
 	
 	/**
@@ -48,13 +48,13 @@ public class Fraction implements Comparable<Fraction> {
 	 * @return added numerator and denominator.
 	 */
 	Fraction add(Fraction f) {
-		if (denominator == 0 || (f.denominator == 0)) throw new IllegalArgumentException("invalid denominator");
+		if(this.denominator == 0 && this.numerator > 0 && f.denominator == 0 && f.numerator < 0) return new Fraction(0,0);
+		else if ((this.denominator == 0 && this.numerator < 0 && f.denominator == 0 && f.numerator > 0)) return new Fraction(0,0);
 		
 		long num = this.numerator*f.denominator + this.denominator*f.numerator;
-  		long den = this.denominator*f.denominator;
-  		// Create the new object and return it.
-  		return 	new Fraction(num, den);
-		 
+	  	long den = this.denominator*f.denominator;
+	  	// Create the new object and return it.
+	  	return 	new Fraction(num, den);		
 	}
 	
 	/**
@@ -63,11 +63,16 @@ public class Fraction implements Comparable<Fraction> {
 	 * @return
 	 */
 	public Fraction subtract( Fraction f ) {
-		long n = numerator * f.denominator - f.numerator * denominator;
-		long d = denominator * f.denominator;
-		return new Fraction(n, d);
+		if(this.denominator == 0 && this.numerator > 0 && f.denominator == 0 && f.numerator < 0) return new Fraction(Long.MAX_VALUE,0);
+		else if ((this.denominator == 0 && this.numerator < 0 && f.denominator == 0 && f.numerator > 0)) return new Fraction(Long.MIN_VALUE,0);
+		else if ( (this.denominator == 0 && this.numerator > 0 && f.denominator == 0 && f.numerator > 0) || (this.denominator == 0 && this.numerator < 0 && f.denominator == 0 && f.numerator < 0) ) return new Fraction(0,0);
+		else {
+			long n = this.numerator*f.denominator - f.numerator*this.denominator;
+			long d = this.denominator * f.denominator;
+			return new Fraction(n, d);
+		}
 	}
-	
+		
 	/**
 	 * return a new fraction that is product of this fraction and f.
 	 * @param f
@@ -116,9 +121,12 @@ public class Fraction implements Comparable<Fraction> {
 	 * @return numerator and denominator.
 	 */
 	public double doubleValue() { 
-		double n = numerator;	// convert to double
-	    double d = denominator;	
-	    return (n / d);
+		if(this.denominator != 0){
+			double n = numerator;	// convert to double
+		    double d = denominator;	
+		    return (n / d);
+		}
+		else return Double.MAX_VALUE;
 	}
 	/**
 	 * 
@@ -131,8 +139,7 @@ public class Fraction implements Comparable<Fraction> {
 			return false;
 		}
 		Fraction f = (Fraction) obj;
-		return this.doubleValue() == f.doubleValue() &&  (numerator == f.numerator) && (denominator == f.denominator);
-
+		return this.toString().equals(f.toString());
 	}
 	
 	/**
@@ -144,17 +151,30 @@ public class Fraction implements Comparable<Fraction> {
 		return this.numerator == 0 && this.denominator == 0;
 
 	}
-	
 	/**
 	 * return true if this fraction is positive or negative infinity.
 	 * @return
 	 */
-	public boolean isInfinite(Fraction f) {
-		return f.numerator != 0 && f.denominator == 0;
-
+	public boolean isInfinite() {
+		return this.numerator != 0 && this.denominator == 0;
+	}
+	public static boolean isNaN(Fraction f){
+		return f.isNaN();
 	}
 	
+	public static boolean isInfinite(Fraction f){
+		return f.isInfinite();
+	}
 	
+	public static long gcd(long n, long d){
+		long t;
+		while(d != 0){
+			t = d;
+			d = n%d;
+			n = t;
+		}
+		return n ;
+	}
 	/**
 	 * Return +1 if this fraction is greater than zero (including
 	 * +Infinity), 0 if fraction is 0 or NaN, -1 if this fraction is less than
@@ -181,36 +201,57 @@ public class Fraction implements Comparable<Fraction> {
 	 * 
 	 */
 	public int compareTo(Fraction f) {
-	    if (this.toString().equals("NaN")) {
-	    	if(f.toString().equals("Nan") || f.toString().equals("-infinity")) {
-	    		return 1;
-	    	}
-	    	else if (f.toString().equals("-infinity")) {
-	    		return 0;
-	    	}
-	    	else return 1;
-	    }else if (this.toString().equals("-infinity")){
-			if (f.toString().equals("-infinity")){
-				return 0;
-			}
-			else
-				return 1;
-		}
-		else
-			if (this.doubleValue() > f.doubleValue()){
-				return 1;
-			}
-			else if (this.doubleValue() < f.doubleValue()){
-				return -1;
-			}
-			else return 0;
-	
+	  if(this.numerator > 0 && this.denominator == 0){
+		  if (f.numerator == 0 && f.denominator == 0) return -1;
+		  else if (f.numerator > 0 && f.denominator == 0) return 0;
+		  else if (f.numerator < 0 && f.denominator == 0) return 1;
+		  else return 1;
+	  }
+	  else if (this.numerator == 0 && this.denominator == 0){
+		  if(f.numerator == 0 && f.denominator == 0) return 0;
+		  else if (f.numerator > 0 && f.denominator == 0) return 1;
+		  else if (f.numerator < 0 && f.denominator == 0) return 1;
+		  else return 1;
+	  }
+	  else if (this.numerator < 0 && this.denominator == 0){
+		  if(f.numerator == 0 && f.denominator == 0) return -1;
+		  else if (f.numerator > 0 && f.denominator == 0) return -1;
+		  else if (f.numerator < 0 && f.denominator == 0) return -1;
+		  else return -1;
+	  }
+//	  else if (this.doubleValue() > f.doubleValue()) return 1;
+//	  else if (this.doubleValue() < f.doubleValue()) return -1;
+//	  else return 0;
+	  else if (this.subtract(f).doubleValue() > 0) return 1;
+	  else if (this.subtract(f).doubleValue() < 0) return -1;
+	  else return 0;
+	  
 	}
 	/**
 	 * return a String representation of the fraction, with no spaces.
 	 */
 	public String toString( ) {
-		return String.format("", this.numerator,this.denominator);
+		if(this.denominator == 0){
+			if(this.numerator > 0){
+				return "Infinity";
+			}else if (this.numerator < 0){
+				return "-Infinity" ;
+			}else return "NaN";		
+		}
+		else {
+			
+			long temp = gcd(this.numerator,this.denominator);
+			long nTemp = this.numerator/temp;
+			long dTemp = this.denominator/temp;
+			if (dTemp < 0){
+				nTemp = nTemp*(-1);
+				dTemp = dTemp*(-1);
+			}
+			if (dTemp == 1L){
+				return nTemp+"";
+			}
+			return String.format("%d/%d",nTemp,dTemp);
+		}	
 	}
 	
 }
