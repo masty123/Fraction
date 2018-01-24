@@ -2,12 +2,13 @@ package fraction;
 import java.lang.Comparable;
 
 /**
- * 
+ * A calculator that used to calculate numerator and denominator it can add, 
+ * subtract, multiply, divide and even power of that number.
  * @author Theeruth Borisuth
  *
  */
 public class Fraction implements Comparable<Fraction> {
-
+	//variable 'n' so on.
 	private long numerator, denominator;
 	public static final Fraction ZERO = new Fraction(0)  ;
 
@@ -59,8 +60,8 @@ public class Fraction implements Comparable<Fraction> {
 	
 	/**
 	 * return a new fraction that is difference of this fraction and f.
-	 * @param f
-	 * @return
+	 * @param f : fraction that you want to subtract.
+	 * @return return a subtracted version.
 	 */
 	public Fraction subtract( Fraction f ) {
 		if(this.denominator == 0 && this.numerator > 0 && f.denominator == 0 && f.numerator < 0) return new Fraction(Long.MAX_VALUE,0);
@@ -75,8 +76,8 @@ public class Fraction implements Comparable<Fraction> {
 		
 	/**
 	 * return a new fraction that is product of this fraction and f.
-	 * @param f
-	 * @return
+	 * @param f : fraction that you want to multiply.
+	 * @return return a multiplied version. 
 	 */
 	public Fraction multiply( Fraction f ) {
 		long n = numerator * f.numerator;
@@ -86,8 +87,8 @@ public class Fraction implements Comparable<Fraction> {
 	
 	/**
 	 * return a new fraction that is this fraction divided by f.
-	 * @param f
-	 * @return
+	 * @param f : fraction that you want to divide.
+	 * @return : return a divided version. 
 	 */
 	public Fraction divide( Fraction f ) {
 		long n = numerator * f.denominator;
@@ -107,8 +108,8 @@ public class Fraction implements Comparable<Fraction> {
 	/**
 	 * return a new fraction that is this fraction raised to the power n. 
 	 * n may be zero or negative.
-	 * @param n
-	 * @return
+	 * @param n : power of n
+	 * @return fraction that has been powered.
 	 */
 	public Fraction pow(int n) {
 		long num = (long) Math.pow(this.numerator,n);
@@ -165,7 +166,12 @@ public class Fraction implements Comparable<Fraction> {
 	public static boolean isInfinite(Fraction f){
 		return f.isInfinite();
 	}
-	
+	/**
+	 * This method is used to find the GCD of numerator and denominator.
+	 * @param n : numerator that you wanted to do GCD.
+	 * @param d : denominator that you wanted to do GCD.
+	 * @return GCD
+	 */
 	public static long gcd(long n, long d){
 		long t;
 		while(d != 0){
@@ -219,9 +225,6 @@ public class Fraction implements Comparable<Fraction> {
 		  else if (f.numerator < 0 && f.denominator == 0) return -1;
 		  else return -1;
 	  }
-//	  else if (this.doubleValue() > f.doubleValue()) return 1;
-//	  else if (this.doubleValue() < f.doubleValue()) return -1;
-//	  else return 0;
 	  else if (this.subtract(f).doubleValue() > 0) return 1;
 	  else if (this.subtract(f).doubleValue() < 0) return -1;
 	  else return 0;
